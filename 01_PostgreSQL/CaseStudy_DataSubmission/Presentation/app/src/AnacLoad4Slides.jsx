@@ -19,15 +19,15 @@ const PAD = 52;   // padding interno
 
 // Dados reais dos testes anotados no notebook
 const TESTS = [
-  { id:"t1", label:"Teste 01", net:"21.6 Mbps ↓ · 4.6 Mbps ↑",   times:{ m1:"11m 40s", m2:"10.1s", m3:"2.6s",  m4:"6.1s"   } },
-  { id:"t2", label:"Teste 02", net:"267.6 Mbps ↓ · 98.0 Mbps ↑",  times:{ m1:"1m 22.1s",m2:"1.6s",  m3:"0.3s",  m4:"1s"     } },
+  { id:"t1", label:"Test 01", net:"21.6 Mbps ↓ · 4.6 Mbps ↑",   times:{ m1:"11m 40s", m2:"10.1s", m3:"2.6s",  m4:"6.1s"   } },
+  { id:"t2", label:"Test 02", net:"267.6 Mbps ↓ · 98.0 Mbps ↑",  times:{ m1:"1m 22.1s",m2:"1.6s",  m3:"0.3s",  m4:"1s"     } },
 ];
 
 const METHODS = [
-  { key:"m1", num:"01", name:"Linha a linha",  sub:"cursor.execute",  color:"#9a3412", bg:"#ffedd5", concept:"Fundamentos de conexão, cursor e transação" },
-  { key:"m2", num:"02", name:"Insert em lote", sub:"execute_values",  color:"#b45309", bg:"#fef3c7", concept:"Batch processing reduz round-trips de rede"  },
-  { key:"m3", num:"03", name:"Stream nativo",  sub:"COPY",            color:"#0f766e", bg:"#dff7f2", concept:"Canal nativo de ingestão em massa do PostgreSQL" },
-  { key:"m4", num:"04", name:"Abstração ORM",  sub:"pandas.to_sql",   color:"#1d4ed8", bg:"#eff6ff", concept:"Produtividade: zero SQL, múltiplos bancos"  },
+  { key:"m1", num:"01", name:"Row-by-row Insertion",  sub:"cursor.execute()",  color:"#9a3412", bg:"#ffedd5", concept:"Connection, cursor & transaction fundamentals" },
+  { key:"m2", num:"02", name:"Batch Insertion",        sub:"execute_values()",  color:"#b45309", bg:"#fef3c7", concept:"Batch processing reduces network round-trips"  },
+  { key:"m3", num:"03", name:"Bulk Load with COPY",    sub:"copy_expert()",     color:"#0f766e", bg:"#dff7f2", concept:"PostgreSQL's native bulk ingestion channel" },
+  { key:"m4", num:"04", name:"DataFrame to Database",  sub:"pandas.to_sql()",   color:"#1d4ed8", bg:"#eff6ff", concept:"Productivity: zero SQL, multiple databases"  },
 ];
 
 // Converte "11m 40s" ou "10.1s" → segundos
@@ -118,7 +118,7 @@ function DiagramM1() {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:12, alignItems:"center" }}>
       <p style={{ margin:"0 0 4px", fontSize:14, color:P.muted, fontStyle:"italic" }}>
-        1 INSERT por viagem de rede
+        1 INSERT per network trip
       </p>
       {[1,2,3].map(i => (
         <FlowRow key={i}>
@@ -128,7 +128,7 @@ function DiagramM1() {
         </FlowRow>
       ))}
       <div style={{ fontSize:18, color:P.muted, letterSpacing:2 }}>⋮</div>
-      <RoundTripBadge label="× 13.000 viagens de rede" color="#dc2626" bg="#fef2f2" />
+      <RoundTripBadge label="× 13,000 network trips" color="#dc2626" bg="#fef2f2" />
     </div>
   );
 }
@@ -138,16 +138,16 @@ function DiagramM2() {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:12, alignItems:"center" }}>
       <p style={{ margin:"0 0 4px", fontSize:14, color:P.muted, fontStyle:"italic" }}>
-        500 linhas empacotadas por lote
+        500 rows packed per batch
       </p>
-      <Pill label="500 linhas por pacote" color="#92400e" bg="#fef3c7" w={260} />
+      <Pill label="500 rows per batch" color="#92400e" bg="#fef3c7" w={260} />
       <span style={{ fontSize:22, color:P.muted }}>↓</span>
       <FlowRow>
         <Pill label="Python" color={P.accent} bg={P.accentSoft} w={110} />
         <span style={{ fontSize:28, color:"#b45309" }}> ⟹ </span>
         <Pill label="PostgreSQL" color="#166534" bg="#f0fdf4" w={130} />
       </FlowRow>
-      <RoundTripBadge label="26 viagens (vs 13.000)" color="#92400e" bg="#fef3c7" />
+      <RoundTripBadge label="26 trips (vs 13,000)" color="#92400e" bg="#fef3c7" />
     </div>
   );
 }
@@ -157,7 +157,7 @@ function DiagramM3() {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:12, alignItems:"center" }}>
       <p style={{ margin:"0 0 4px", fontSize:14, color:P.muted, fontStyle:"italic" }}>
-        1 stream contínuo (sem parse de INSERT)
+        1 continuous stream (no INSERT parsing)
       </p>
       <FlowRow>
         <Pill label="DataFrame" color={P.accentAlt} bg={P.accentAltSoft} w={126} />
@@ -170,7 +170,7 @@ function DiagramM3() {
         <span style={{ fontSize:26, color:P.accentAlt }}> ━━━▶ </span>
         <Pill label="PostgreSQL" color="#166534" bg="#f0fdf4" w={130} />
       </FlowRow>
-      <RoundTripBadge label="1 único round-trip" color={P.accentAlt} bg={P.accentAltSoft} />
+      <RoundTripBadge label="1 single round-trip" color={P.accentAlt} bg={P.accentAltSoft} />
     </div>
   );
 }
@@ -185,15 +185,21 @@ function DiagramM4() {
     { label:"PostgreSQL",        color:"#166534", bg:"#f0fdf4" },
   ];
   return (
-    <div style={{ display:"flex", flexDirection:"column", gap:6, alignItems:"center" }}>
-      <p style={{ margin:"0 0 6px", fontSize:14, color:P.muted, fontStyle:"italic" }}>
-        camadas de abstração
+    <div style={{ display:"flex", flexDirection:"column", gap:2, alignItems:"center" }}>
+      <p style={{ margin:"0 0 2px", fontSize:14, color:P.muted, fontStyle:"italic" }}>
+        abstraction layers
       </p>
       {layers.map((l,i) => (
         <React.Fragment key={l.label}>
-          <Pill label={l.label} color={l.color} bg={l.bg} w={250} />
+          <div style={{
+            background:l.bg, color:l.color, border:`1px solid ${P.border}`,
+            borderRadius:10, padding:"5px 20px", fontWeight:700, fontSize:14,
+            width:250, textAlign:"center", flexShrink:0,
+          }}>
+            {l.label}
+          </div>
           {i < layers.length - 1 && (
-            <span style={{ fontSize:16, color:P.muted, lineHeight:1 }}>↓</span>
+            <span style={{ fontSize:11, color:P.muted, lineHeight:1 }}>↓</span>
           )}
         </React.Fragment>
       ))}
@@ -208,9 +214,9 @@ function TimingTable({ mKey }) {
       <table style={{ width:"100%", borderCollapse:"collapse" }}>
         <thead>
           <tr>
-            <th style={{ ...thStyle, fontSize:14 }}>Cenário</th>
-            <th style={{ ...thStyle, fontSize:12, color:P.muted }}>Internet</th>
-            <th style={{ ...thStyle, textAlign:"center", color:P.accent, fontSize:14 }}>Tempo</th>
+            <th style={{ ...thStyle, fontSize:14 }}>Scenario</th>
+            <th style={{ ...thStyle, fontSize:12, color:P.muted }}>Network</th>
+            <th style={{ ...thStyle, textAlign:"center", color:P.accent, fontSize:14 }}>Time</th>
           </tr>
         </thead>
         <tbody>
@@ -232,11 +238,11 @@ function UseCases({ usar, evitar }) {
   return (
     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
       <div style={{ background:P.accentAltSoft, borderRadius:12, padding:"14px 16px", border:`1px solid ${P.border}` }}>
-        <p style={{ margin:"0 0 6px", fontWeight:700, fontSize:13, color:P.accentAlt }}>✔ USAR QUANDO</p>
+        <p style={{ margin:"0 0 6px", fontWeight:700, fontSize:13, color:P.accentAlt }}>✔ USE WHEN</p>
         <p style={{ margin:0, fontSize:13, lineHeight:1.6, color:P.text }}>{usar}</p>
       </div>
       <div style={{ background:"#fef2f2", borderRadius:12, padding:"14px 16px", border:"1px solid #fecaca" }}>
-        <p style={{ margin:"0 0 6px", fontWeight:700, fontSize:13, color:"#dc2626" }}>✖ EVITAR QUANDO</p>
+        <p style={{ margin:"0 0 6px", fontWeight:700, fontSize:13, color:"#dc2626" }}>✖ AVOID WHEN</p>
         <p style={{ margin:0, fontSize:13, lineHeight:1.6, color:P.text }}>{evitar}</p>
       </div>
     </div>
@@ -313,11 +319,11 @@ function Slide1A() {
           fontSize:80, lineHeight:1.04, margin:"0 0 28px",
           color:P.text, fontFamily:"Georgia, serif",
         }}>
-          4 formas de enviar<br />dados ao PostgreSQL<br />com Python
+          4 ways to send data<br />to PostgreSQL<br />with Python
         </h1>
         <p style={{ fontSize:26, color:P.muted, margin:0, lineHeight:1.6, maxWidth:750 }}>
-          Da abordagem mais didática à mais rápida — um estudo de caso
-          com dados reais de ocorrências da ANAC.
+          From the most intuitive approach to the fastest — a case study
+          with real aviation incident data from ANAC.
         </p>
       </div>
 
@@ -346,9 +352,9 @@ function Slide1A() {
       {/* Rodapé: contexto */}
       <div style={{ display:"flex", gap:40, borderTop:`1px solid ${P.border}`, paddingTop:26 }}>
         {[
-          ["Fonte",    "ANAC · V_OCORRENCIA_AMPLA.json"],
-          ["Volume",   "~13.000 registros"],
-          ["Destino",  "PostgreSQL remoto"],
+          ["Source",  "ANAC · Aviation Incident Records"],
+          ["Records", "~13,000 rows"],
+          ["Target",  "Remote PostgreSQL"],
         ].map(([k,v]) => (
           <div key={k}>
             <p style={{ margin:0, fontSize:12, fontWeight:700, letterSpacing:1, color:P.muted, textTransform:"uppercase" }}>{k}</p>
@@ -370,10 +376,10 @@ function Slide1B() {
       <div>
         <Badge>PostgreSQL · Python · ETL · Case Study ANAC</Badge>
         <h1 style={{ fontSize:60, lineHeight:1.06, margin:"20px 0 12px", color:P.text }}>
-          4 formas de enviar dados ao<br />PostgreSQL com Python
+          4 ways to send data to<br />PostgreSQL with Python
         </h1>
         <p style={{ fontSize:20, color:P.muted, margin:0, lineHeight:1.5 }}>
-          ~13.000 registros · servidor remoto · 2 cenários de velocidade de rede
+          ~13,000 records · remote server · 2 network speed scenarios
         </p>
       </div>
 
@@ -427,9 +433,9 @@ function Slide1B() {
       {/* Rodapé */}
       <div style={{ display:"flex", gap:40, borderTop:`1px solid ${P.border}`, paddingTop:22 }}>
         {[
-          ["Fonte",    "ANAC · V_OCORRENCIA_AMPLA.json"],
-          ["Volume",   "~13.000 registros"],
-          ["Destino",  "PostgreSQL remoto"],
+          ["Source",  "ANAC · Aviation Incident Records"],
+          ["Records", "~13,000 rows"],
+          ["Target",  "Remote PostgreSQL"],
         ].map(([k,v]) => (
           <div key={k}>
             <p style={{ margin:0, fontSize:12, fontWeight:700, letterSpacing:1, color:P.muted, textTransform:"uppercase" }}>{k}</p>
@@ -448,9 +454,9 @@ function Slide2() {
   return (
     <Slide>
       <div style={{ marginBottom:18 }}>
-        <Badge>Métodos 01 e 02 · psycopg2</Badge>
+        <Badge>Methods 01 & 02 · psycopg2</Badge>
         <h1 style={{ fontSize:40, margin:"12px 0 0", lineHeight:1.1, color:P.text }}>
-          INSERT linha a linha &nbsp;vs&nbsp; Insert em lote
+          Row-by-row Insertion &nbsp;vs&nbsp; Batch Insertion
         </h1>
       </div>
 
@@ -458,14 +464,14 @@ function Slide2() {
         <MethodColumn
           method={METHODS[0]}
           diagram={<DiagramM1/>}
-          usar="Aprender psycopg2. Até ~100 registros. Lógica condicional por linha."
-          evitar="Volumes acima de 1.000 linhas em servidor remoto ou em produção."
+          usar="Learning psycopg2. Up to ~100 records. Conditional logic per row."
+          evitar="Over ~1,000 rows on a remote server or in production."
         />
         <MethodColumn
           method={METHODS[1]}
           diagram={<DiagramM2 />}
-          usar="Maioria dos projetos práticos. Boa velocidade com controle total do SQL."
-          evitar="Volumes acima de 1M de linhas — nesse caso COPY é mais adequado."
+          usar="Most practical projects. Good speed with full SQL control."
+          evitar="Over 1M rows — in that case COPY is a better fit."
         />
       </div>
     </Slide>
@@ -479,9 +485,9 @@ function Slide3() {
   return (
     <Slide>
       <div style={{ marginBottom:18 }}>
-        <Badge alt>Métodos 03 e 04 · Carga em massa e ORM</Badge>
+        <Badge alt>Methods 03 & 04 · Bulk Load & DataFrame</Badge>
         <h1 style={{ fontSize:40, margin:"12px 0 0", lineHeight:1.1, color:P.text }}>
-          Stream nativo COPY &nbsp;vs&nbsp; Abstração pandas.to_sql
+          Bulk Load with COPY &nbsp;vs&nbsp; DataFrame to Database
         </h1>
       </div>
 
@@ -489,15 +495,15 @@ function Slide3() {
         <MethodColumn
           method={METHODS[2]}
           diagram={<DiagramM3 />}
-          usar="ETL de alto volume em produção. Cargas regulares de grandes arquivos."
-          evitar="Quando precisar de type adapters automáticos ou de lógica condicional por linha."
+          usar="High-volume production ETL. Regular loads of large files."
+          evitar="When you need automatic type adapters or per-row conditional logic."
           alt
         />
         <MethodColumn
           method={METHODS[3]}
           diagram={<DiagramM4 />}
-          usar="Prototipagem em Jupyter. Múltiplos bancos (troca só a string de conexão)."
-          evitar="Tabelas com índices/constraints críticos ao usar if_exists='replace'."
+          usar="Jupyter prototyping. Multiple databases (just swap the connection string)."
+          evitar="Tables with critical indexes/constraints when using if_exists='replace'."
         />
       </div>
     </Slide>
@@ -523,12 +529,12 @@ function Slide4() {
     <Slide between>
       {/* Cabeçalho */}
       <div>
-        <Badge>Comparação · 4 Métodos · 2 Cenários reais</Badge>
+        <Badge>Comparison · 4 Methods · 2 Real Scenarios</Badge>
         <h1 style={{ fontSize:50, margin:"12px 0 6px", lineHeight:1.08, color:P.text }}>
-          Resultados dos testes
+          Test Results
         </h1>
         <p style={{ margin:0, fontSize:20, color:P.muted }}>
-          ~13.000 registros enviados para PostgreSQL remoto em duas condições de rede
+          ~13,000 records sent to a remote PostgreSQL under two network conditions
         </p>
       </div>
 
@@ -540,19 +546,19 @@ function Slide4() {
         <table style={{ width:"100%", borderCollapse:"collapse" }}>
           <thead>
             <tr>
-              <th style={thStyle}>Método</th>
-              <th style={thStyle}>Abordagem</th>
+              <th style={thStyle}>Method</th>
+              <th style={thStyle}>Approach</th>
               <th style={{ ...thStyle, textAlign:"center" }}>
-                Teste 01<br/>
+                Test 01<br/>
                 <span style={{ fontWeight:400, fontSize:12, color:P.muted }}>21.6 / 4.6 Mbps</span>
               </th>
-              <th style={{ ...thStyle, textAlign:"center", color:P.accent }}>Ganho T1</th>
+              <th style={{ ...thStyle, textAlign:"center", color:P.accent }}>Speed T1</th>
               <th style={{ ...thStyle, textAlign:"center" }}>
-                Teste 02<br/>
+                Test 02<br/>
                 <span style={{ fontWeight:400, fontSize:12, color:P.muted }}>267.6 / 98 Mbps</span>
               </th>
-              <th style={{ ...thStyle, textAlign:"center", color:P.accentAlt }}>Ganho T2</th>
-              <th style={thStyle}>Melhor para</th>
+              <th style={{ ...thStyle, textAlign:"center", color:P.accentAlt }}>Speed T2</th>
+              <th style={thStyle}>Best for</th>
             </tr>
           </thead>
           <tbody>
@@ -585,13 +591,13 @@ function Slide4() {
           borderRadius:16, padding:24, boxShadow:"0 4px 18px rgba(58,38,18,0.08)",
         }}>
           <p style={{ margin:"0 0 14px", fontWeight:700, fontSize:17, color:P.accent }}>
-            Quando usar cada método
+            When to use each method
           </p>
           {[
-            ["Até 100 linhas",       "01 — cursor.execute"],
-            ["1k – 100k linhas",     "02 — execute_values"],
-            ["100k – 1M+ linhas",    "03 — COPY"],
-            ["Prototipagem / Jupyter","04 — pandas.to_sql"],
+            ["Up to 100 rows",        "01 — cursor.execute"],
+            ["1k – 100k rows",        "02 — execute_values"],
+            ["100k – 1M+ rows",       "03 — COPY"],
+            ["Prototyping / Jupyter", "04 — pandas.to_sql"],
           ].map(([vol, met]) => (
             <div key={vol} style={{
               display:"flex", justifyContent:"space-between", alignItems:"center",
@@ -610,12 +616,12 @@ function Slide4() {
             border:`1px solid ${P.border}`, flex:1,
           }}>
             <p style={{ margin:"0 0 10px", fontWeight:700, fontSize:16, color:P.accent }}>
-              O que os testes provam
+              What the tests prove
             </p>
             <p style={{ margin:0, fontSize:15, lineHeight:1.65, color:P.text }}>
-              O problema nunca foi o banco. Foi o número de viagens de rede.
-              COPY reduziu de <strong>11 min para 2.6 s</strong> — mesma rede, mesmo banco,
-              mesmo arquivo. A diferença está em <em>como</em> os dados chegam ao servidor.
+              The problem was never the database. It was the number of network trips.
+              COPY reduced load time from <strong>11 min to 2.6 s</strong> — same network, same database,
+              same file. The difference is in <em>how</em> the data reaches the server.
             </p>
           </div>
           <div style={{
@@ -623,11 +629,11 @@ function Slide4() {
             border:`1px solid ${P.border}`,
           }}>
             <p style={{ margin:"0 0 8px", fontWeight:700, fontSize:15, color:P.accentAlt }}>
-              Internet mais rápida ajuda — mas o método faz mais diferença
+              Faster internet helps — but the method matters more
             </p>
             <p style={{ margin:0, fontSize:14, lineHeight:1.65, color:P.text }}>
-              A internet melhorou <strong>12×</strong> entre os testes. O COPY ficou <strong>274×</strong> mais
-              rápido que o Método 01 no mesmo teste. Otimizar o método vale mais do que melhorar a rede.
+              The network improved <strong>12×</strong> between tests. COPY was <strong>274×</strong> faster
+              than Method 01 in the same test. Optimizing the method beats upgrading the network.
             </p>
           </div>
         </div>
@@ -640,11 +646,11 @@ function Slide4() {
 // Registro dos slides
 // ═══════════════════════════════════════════════════════════════════════════════
 const SLIDES = [
-  { id:"1a", label:"1A · Capa",          component:Slide1A },
-  { id:"1b", label:"1B · Capa + Dados",  component:Slide1B },
-  { id:"2",  label:"2 · Métodos 1 e 2",  component:Slide2  },
-  { id:"3",  label:"3 · Métodos 3 e 4",  component:Slide3  },
-  { id:"4",  label:"4 · Comparação",     component:Slide4  },
+  { id:"1a", label:"1A · Cover",          component:Slide1A },
+  { id:"1b", label:"1B · Cover + Data",   component:Slide1B },
+  { id:"2",  label:"2 · Methods 1 & 2",   component:Slide2  },
+  { id:"3",  label:"3 · Methods 3 & 4",   component:Slide3  },
+  { id:"4",  label:"4 · Comparison",      component:Slide4  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -725,7 +731,7 @@ export default function AnacLoad4Slides() {
       <SlideComponent />
 
       <p style={{ color:"#555", fontSize:11, margin:0 }}>
-        {cur + 1} / {SLIDES.length} · ← → para navegar · tire o print apenas do quadrado acima
+        {cur + 1} / {SLIDES.length} · ← → to navigate · screenshot the square above only
       </p>
     </div>
   );
