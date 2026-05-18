@@ -3,7 +3,7 @@ import pandas as pd
 import psycopg2
 
 # %%
-caminho_do_arquivo = r"C:\Users\edmil\OneDrive\Documentos\Cursos\Python - SGBDS - Arquivos\Origem de dados\V_OCORRENCIA_AMPLA.json"
+caminho_do_arquivo = r"..\..Data\V_OCORRENCIA_AMPLA.json"
 df = pd.read_json(caminho_do_arquivo, encoding='utf-8-sig')
 
 # %%
@@ -13,10 +13,10 @@ df.rename( columns={  'Classificacao_da_Ocorrência' : 'Classificacao_da_Ocorren
 
 # %%
 # Parâmetros de conexão
-dbname   = 'python'
+dbname   = 'postgres-anac'
 user     = 'postgres'
-password = '12345'
-host     = 'localhost'
+password = '432931'
+host     = 'immich-server.tailab6cca.ts.net'
 port     = '5432' 
 
 conexao = psycopg2.connect(dbname=dbname,user=user,password=password,host=host,port=port)
